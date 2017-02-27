@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Autocomplete - Default functionality</title>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/fuse/2.6.1/fuse.min.js"></script>
+  <!--<script src="autocomplete.js">-->
+  <script>
+  $(function(){
+    //console.log("before getJSON method");
+    var makes;
+    var options = {
+    shouldSort: true,
+    threshold: 0.6,
+    location: 0,
+    distance: 100,
+    maxPatternLength: 32,
+    minMatchCharLength: 1,
+    keys: ["make"],
+    id: ["make"]
+    //keys: []
+    };
+    var fuse;
+
+    $.getJSON("makes.json",function(data){
+      //console.log("in function data");
+      //$.each( data, function( key, val ) {
+        //console.log(val);
+      //});
+     /*var i=0;
+     for(i=0;i<data.length;i++){
+        makes[i]=data[i];
+        //console.log(makes[i]);
+      }*/
+      makes=data;
+      //makes = Object.keys(data).map(function(key) { return { id: key, make: data[key]}; });
+      //console.log(makes);
+    });
+
+    $( "#tags" ).autocomplete({
+      source: function(request, response) {
+        //console.log("in autocomplete function");
+        //console.log(makes);
+        //var results = $.ui.autocomplete.filter(makes, request.term);
+        fuse = new Fuse(makes, options); // "makes" is the item array
+        //console.log(fuse);
+        var results = fuse.search(request.term);
+        //console.log(results);
+        response(results.slice(0, 10));
+      }
+    });
+  });
+
+  </script>
+</head>
+<body>
+
+<div class="ui-widget">
+  <label for="tags">Tags: </label>
+  <input id="tags">
+</div>
+
+</body>
+</html>
